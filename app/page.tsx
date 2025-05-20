@@ -1,103 +1,172 @@
-import Image from "next/image";
+"use client";
+import { useState, useEffect } from "react";
+
+interface Resource {
+  title: string;
+  link: string;
+  description: string;
+  category: string;
+}
+
+const categories = [
+  "All",
+  "Design",
+  "Development",
+  "Productivity",
+  "Inspiration",
+];
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [filter, setFilter] = useState("All");
+  const [form, setForm] = useState<Resource>({
+    title: "",
+    link: "",
+    description: "",
+    category: "Design",
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+  // Load resources from localStorage on initial render
+  useEffect(() => {
+    const savedResources = localStorage.getItem("resources");
+    if (savedResources) {
+      setResources(JSON.parse(savedResources));
+    }
+  }, []);
+
+  // Save resources to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("resources", JSON.stringify(resources));
+  }, [resources]);
+
+  const filteredResources =
+    filter === "All"
+      ? resources
+      : resources.filter((r) => r.category === filter);
+
+  function handleInput(
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  }
+
+  function handleAddResource(e: React.FormEvent) {
+    e.preventDefault();
+    if (!form.title || !form.link) return;
+    setResources([form, ...resources]);
+    setForm({ title: "", link: "", description: "", category: "Design" });
+  }
+
+  return (
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 px-4 py-8 font-sans">
+      <div className="max-w-3xl mx-auto">
+        <header className="mb-8 flex flex-col gap-2 items-center">
+          <h1 className="text-3xl font-bold tracking-tight">Resource Hub</h1>
+          <p className="text-neutral-400 text-center">
+            Dumping all the links I've found. 
+          </p>
+        </header>
+        <form
+          onSubmit={handleAddResource}
+          className="bg-neutral-900 rounded-xl p-6 mb-8 shadow-lg flex flex-col gap-4"
+        >
+          <div className="flex flex-col sm:flex-row gap-4">
+            <input
+              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+              name="title"
+              placeholder="Title"
+              value={form.title}
+              onChange={handleInput}
+              required
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+            <input
+              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+              name="link"
+              placeholder="Link (https://...)"
+              value={form.link}
+              onChange={handleInput}
+              required
+            />
+          </div>
+          <textarea
+            className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            name="description"
+            placeholder="Description (optional)"
+            value={form.description}
+            onChange={handleInput}
+            rows={2}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="flex items-center gap-4">
+            <select
+              className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+              name="category"
+              value={form.category}
+              onChange={handleInput}
+            >
+              {categories.slice(1).map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+            <button
+              type="submit"
+              className="ml-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+            >
+              Add Resource
+            </button>
+          </div>
+        </form>
+        <nav className="flex gap-2 mb-6 flex-wrap justify-center">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              className={`px-4 py-1 rounded-full text-sm font-medium transition border border-transparent ${
+                filter === cat
+                  ? "bg-indigo-600 text-white"
+                  : "bg-neutral-800 text-neutral-300 hover:bg-neutral-700"
+              }`}
+              onClick={() => setFilter(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </nav>
+        <section className="grid gap-6 sm:grid-cols-2">
+          {filteredResources.length === 0 ? (
+            <div className="col-span-full text-center text-neutral-500 py-12">
+              No resources yet. Add your first one!
+            </div>
+          ) : (
+            filteredResources.map((res, i) => (
+              <a
+                key={i}
+                href={res.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-neutral-900 rounded-xl p-5 shadow hover:shadow-xl border border-neutral-800 hover:border-indigo-600 transition group"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-700/20 text-indigo-300 font-semibold">
+                    {res.category}
+                  </span>
+                </div>
+                <h2 className="text-lg font-bold group-hover:text-indigo-400 transition line-clamp-1">
+                  {res.title}
+                </h2>
+                <p className="text-neutral-400 text-sm mt-1 line-clamp-2">
+                  {res.description}
+                </p>
+                <span className="block mt-2 text-xs text-indigo-500 group-hover:underline break-all">
+                  {res.link}
+                </span>
+              </a>
+            ))
+          )}
+        </section>
+      </div>
     </div>
   );
 }

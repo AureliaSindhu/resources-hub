@@ -27,7 +27,6 @@ export default function Home() {
     category: "Design",
   });
 
-  // Load resources from localStorage on initial render
   useEffect(() => {
     const savedResources = localStorage.getItem("resources");
     if (savedResources) {
@@ -35,7 +34,6 @@ export default function Home() {
     }
   }, []);
 
-  // Save resources to localStorage whenever they change
   useEffect(() => {
     localStorage.setItem("resources", JSON.stringify(resources));
   }, [resources]);

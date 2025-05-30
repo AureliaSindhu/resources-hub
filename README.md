@@ -1,68 +1,77 @@
-# Resource Hub
+# [Resource Hub](https://resources-aacode.vercel.app/)
 
-A Notion-inspired dark-themed web application for organizing and managing your favorite resources, links, and references. Built with Next.js and Tailwind CSS.
+A modern, dark-themed web application for organizing and managing your favorite resources, links, and references. Built with NextJS and Tailwind CSS.
+
+<!-- > [Live Preview](https://resources-aacode.vercel.app/) -->
 
 ## Features
 
-- 🎨 Dark theme with Notion-inspired design
-- 📝 Add resources with title, link, description, and category
-- 🏷️ Categorize resources (Design, Development, Productivity, Inspiration)
-- 🔍 Filter resources by category
-- 💾 Persistent storage using localStorage
-- 📱 Responsive design for all devices
+- 🎨 Modern dark theme with responsive design
+- 📝 Add and manage resources
+- 🏷️ Predefined categories:
+  - Design
+  - Development
+  - Productivity
+  - Inspiration
+- 🔍 Real-time filtering by category
+- 💾 Automatic data persistence using localStorage
+- 📱 Fully responsive design for all devices
 
 ## Tech Stack
 
-- Next.js 14
-- TypeScript
+- NextJS
 - Tailwind CSS
-- React Hooks
 
 ## Getting Started
 
-1. Clone the repository:
+Simply visit [this link](https://resources-aacode.vercel.app/) to start using the application. No installation required!
 
+<!-- For developers who want to run locally:
+1. Clone the repository:
 ```bash
 git clone <your-repo-url>
-cd resources-hub
+cd resources
 ```
 
 2. Install dependencies:
-
 ```bash
 npm install
 ```
 
 3. Run the development server:
-
 ```bash
 npm run dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+-->
 
 ## Usage
 
-1. Add a new resource:
+1. Adding Resources:
 
-   - Fill in the title and link (required)
-   - Add an optional description
-   - Select a category
-   - Click "Add Resource"
+   - Enter a title and link (both required)
+   - Optionally add a description
+   - Select a category from the dropdown
+   - Click "Add Resource" to save
 
-2. Filter resources:
-
-   - Use the category buttons at the top to filter resources
-   - Click "All" to see all resources
-
-3. View resources:
-   - Resources are displayed in a responsive grid
-   - Click on any resource card to open the link in a new tab
+2. Managing Resources:
+   - Use the category filter buttons to view specific categories
+   - Click "All" to view all resources
+   - Resources are automatically saved to your browser's localStorage
+   - Click any resource card to open the link in a new tab
 
 ## Data Storage
 
-Resources are stored in your browser's localStorage, so they persist between sessions. No server or database is required.
+The application uses browser localStorage for data persistence, which means:
 
-## License
+- Your resources are saved automatically
+- Data persists between browser sessions
+- No server or database setup required
+- Data is stored locally in your browser
 
-MIT
+
+---
+Happy saving,
+
+☕️ aacode

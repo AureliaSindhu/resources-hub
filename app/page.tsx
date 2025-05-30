@@ -65,7 +65,7 @@ export default function Home() {
         <header className="mb-8 flex flex-col gap-2 items-center">
           <h1 className="text-3xl font-bold tracking-tight">Resource Hub</h1>
           <p className="text-neutral-400 text-center">
-            Dumping all the links I've found. 
+            Dumping all the links I&apos;ve found. 
           </p>
         </header>
         <form

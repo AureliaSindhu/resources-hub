@@ -71,5 +71,4 @@ The application uses browser localStorage for data persistence, which means:
 - Data is stored locally in your browser
 
 
----
->> Happy saving, **☕️ aacode**
+ Happy saving, **☕️ aacode**

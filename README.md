@@ -70,5 +70,6 @@ The application uses browser localStorage for data persistence, which means:
 - No server or database setup required
 - Data is stored locally in your browser
 
+---
 
- Happy saving, **☕️ aacode**
+Happy saving, **☕️ aacode**

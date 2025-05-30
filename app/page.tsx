@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
 
 interface Resource {
   title: string;
@@ -65,7 +66,7 @@ export default function Home() {
         <header className="mb-8 flex flex-col gap-2 items-center">
           <h1 className="text-3xl font-bold tracking-tight">Resource Hub</h1>
           <p className="text-neutral-400 text-center">
-            Dumping all the links I&apos;ve found. 
+            Dumping all the links I&apos;ve found.
           </p>
         </header>
         <form
@@ -99,18 +100,23 @@ export default function Home() {
             rows={2}
           />
           <div className="flex items-center gap-4">
-            <select
-              className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
-              name="category"
-              value={form.category}
-              onChange={handleInput}
-            >
-              {categories.slice(1).map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+            <div className="relative w-1/4">
+              <select
+                className="appearance-none w-full bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
+                name="category"
+                value={form.category}
+                onChange={handleInput}
+              >
+                {categories.slice(1).map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400">
+                <ChevronDown size={20} />
+              </span>
+            </div>
             <button
               type="submit"
               className="ml-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2 rounded-lg shadow transition"

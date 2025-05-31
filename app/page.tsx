@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Pencil } from "lucide-react";
 
 interface Resource {
   title: string;
@@ -26,6 +26,7 @@ export default function Home() {
     description: "",
     category: "Design",
   });
+  const [editIndex, setEditIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const savedResources = localStorage.getItem("resources");
@@ -54,7 +55,17 @@ export default function Home() {
   function handleAddResource(e: React.FormEvent) {
     e.preventDefault();
     if (!form.title || !form.link) return;
-    setResources([form, ...resources]);
+
+    if (editIndex !== null) {
+      const updated = [...resources];
+      updated[editIndex] = form;
+      setResources(updated);
+      setEditIndex(null);
+      setForm({ title: "", link: "", description: "", category: "Design" });
+      return;
+    } else {
+      setResources([form, ...resources]);
+    }
     setForm({ title: "", link: "", description: "", category: "Design" });
   }
 
@@ -122,6 +133,23 @@ export default function Home() {
               Add Resource
             </button>
           </div>
+          {editIndex !== null && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditIndex(null);
+                setForm({
+                  title: "",
+                  link: "",
+                  description: "",
+                  category: "Design",
+                });
+              }}
+              className="ml-2 text-xs text-neutral-400 hover:underline"
+            >
+              Cancel
+            </button>
+          )}
         </form>
         <nav className="flex gap-2 mb-6 flex-wrap justify-center">
           {categories.map((cat) => (
@@ -138,9 +166,7 @@ export default function Home() {
             </button>
           ))}
         </nav>
-        <section
-          className="grid gap-6 sm:grid-cols-2 overflow-y-auto"
-        >
+        <section className="grid gap-6 sm:grid-cols-2 overflow-y-auto">
           {filteredResources.length === 0 ? (
             <div className="col-span-full text-center text-neutral-500 py-12">
               No resources yet. Add your first one!
@@ -154,14 +180,30 @@ export default function Home() {
                 rel="noopener noreferrer"
                 className="bg-neutral-900 rounded-xl p-5 shadow hover:shadow-xl border border-neutral-800 hover:border-indigo-600 transition group"
               >
-                <div className="flex items-center gap-2 mb-2">
+                <div className="flex flex-row justify-between">
+                  <h2 className="text-md font-bold group-hover:text-indigo-400 transition line-clamp-1">
+                    {res.title}
+                  </h2>
+
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setForm(res);
+                      setEditIndex(i);
+                    }}
+                    className="text-indigo-500 hover:text-indigo-400 transition"
+                  >
+                    <Pencil size={20} />
+                  </button>
+                </div>
+
+                <div className="flex">
                   <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-700/20 text-indigo-300 font-semibold">
                     {res.category}
                   </span>
                 </div>
-                <h2 className="text-lg font-bold group-hover:text-indigo-400 transition line-clamp-1">
-                  {res.title}
-                </h2>
+
                 <p className="text-neutral-400 text-sm mt-1 line-clamp-2">
                   {res.description}
                 </p>
@@ -174,11 +216,16 @@ export default function Home() {
         </section>
       </div>
       <footer className="mx-auto py-2 text-center text-sm text-neutral-500">
-        <p>&copy; 2025  | made with several cups of americano, love 
-          <a href="https://www.instagram.com/aacodee/?hl=en" target="_blank" rel="noopener noreferrer">
-              <strong> aacode</strong>
+        <p>
+          &copy; 2025 | made with several cups of americano, love
+          <a
+            href="https://www.instagram.com/aacodee/?hl=en"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <strong> aacode</strong>
           </a>
-          </p>
+        </p>
       </footer>
     </div>
   );

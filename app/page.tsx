@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { ChevronDown, Pencil } from "lucide-react";
+
+import icon from "./icon.png";
 
 interface Resource {
   title: string;
@@ -73,7 +76,10 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-neutral-950 text-neutral-100 px-4 py-8 font-sans">
       <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
         <header className="mb-8 flex flex-col gap-2 items-center">
-          <h1 className="text-3xl font-bold tracking-tight">Resource Hub</h1>
+          <div className="flex flex-row">
+            <Image src={icon} alt="icon" width={40} height={40} className="mr-2"/>
+            <h1 className="text-3xl font-bold tracking-tight">Resource Hub</h1>
+          </div>
           <p className="text-neutral-400 text-center">
             Dumping all the links I&apos;ve found.
           </p>

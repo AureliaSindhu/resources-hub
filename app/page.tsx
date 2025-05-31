@@ -139,8 +139,7 @@ export default function Home() {
           ))}
         </nav>
         <section
-          className="grid gap-6 sm:grid-cols-2 flex-1 overflow-y-auto"
-          style={{ maxHeight: "400px" }}
+          className="grid gap-6 sm:grid-cols-2 overflow-y-auto"
         >
           {filteredResources.length === 0 ? (
             <div className="col-span-full text-center text-neutral-500 py-12">
@@ -153,7 +152,7 @@ export default function Home() {
                 href={res.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-neutral-900 rounded-xl p-5 shadow hover:shadow-xl border border-neutral-800 hover:border-indigo-600 transition group"
+                className="bg-neutral-900 rounded-xl p-5 shadow hover:shadow-xl border border-neutral-800 hover:border-indigo-600 transition group"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-700/20 text-indigo-300 font-semibold">

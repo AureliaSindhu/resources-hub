@@ -13,9 +13,8 @@ A modern, dark-themed web application for organizing and managing your favorite 
   - Development
   - Productivity
   - Inspiration
-- 🔍 Real-time filtering by category
+- 🔍 Filtering by category
 - 💾 Automatic data persistence using localStorage
-- 📱 Fully responsive design for all devices
 
 ## Tech Stack
 

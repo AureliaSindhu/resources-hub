@@ -1,7 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { ChevronDown, Pencil } from "lucide-react";
+import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 
 import icon from "./icon.png";
 
@@ -42,10 +42,11 @@ export default function Home() {
     localStorage.setItem("resources", JSON.stringify(resources));
   }, [resources]);
 
-  const filteredResources =
-    filter === "All"
+  const filteredResources = useMemo(() => {
+    return filter === "All"
       ? resources
       : resources.filter((r) => r.category === filter);
+  }, [resources, filter]);
 
   function handleInput(
     e: React.ChangeEvent<
@@ -60,37 +61,68 @@ export default function Home() {
     if (!form.title || !form.link) return;
 
     if (editIndex !== null) {
-      const updated = [...resources];
-      updated[editIndex] = form;
-      setResources(updated);
+      const updatedResources = resources.map((res, index) =>
+        index === editIndex ? form : res
+      );
+      setResources(updatedResources);
       setEditIndex(null);
-      setForm({ title: "", link: "", description: "", category: "Design" });
-      return;
     } else {
       setResources([form, ...resources]);
     }
     setForm({ title: "", link: "", description: "", category: "Design" });
   }
 
+  function handleEdit(resourceToEdit: Resource) {
+    const index = resources.findIndex(
+      (r) =>
+        r.title === resourceToEdit.title &&
+        r.link === resourceToEdit.link &&
+        r.description === resourceToEdit.description &&
+        r.category === resourceToEdit.category
+    );
+    if (index !== -1) {
+      setForm(resourceToEdit);
+      setEditIndex(index);
+    } else {
+      const fallbackIndex = resources.indexOf(resourceToEdit);
+      if (fallbackIndex !== -1) {
+        setForm(resourceToEdit);
+        setEditIndex(fallbackIndex);
+      }
+    }
+  }
+
+  function handleDelete(index: number) {
+    const updatedResources = resources.filter((_, i) => i !== index);
+    setResources(updatedResources);
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-950 text-neutral-100 px-4 py-8 font-sans">
-      <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
+    <div className="h-screen flex flex-col bg-neutral-950 text-neutral-100 px-4 py-6 font-sans">
+      <div className="max-w-3xl mx-auto w-full">
         <header className="mb-8 flex flex-col gap-2 items-center">
-          <div className="flex flex-row">
-            <Image src={icon} alt="icon" width={40} height={40} className="mr-2"/>
+          <div className="flex flex-row items-center">
+            <Image
+              src={icon}
+              alt="Resource Hub Icon"
+              width={40}
+              height={40}
+              className="mr-2"
+            />
             <h1 className="text-3xl font-bold tracking-tight">Resource Hub</h1>
           </div>
           <p className="text-neutral-400 text-center">
             Dumping all the links I&apos;ve found.
           </p>
         </header>
+
         <form
           onSubmit={handleAddResource}
           className="bg-neutral-900 rounded-xl p-6 mb-8 shadow-lg flex flex-col gap-4"
         >
           <div className="flex flex-col sm:flex-row gap-4">
             <input
-              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
               name="title"
               placeholder="Title"
               value={form.title}
@@ -98,8 +130,9 @@ export default function Home() {
               required
             />
             <input
-              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
               name="link"
+              type="url"
               placeholder="Link (https://...)"
               value={form.link}
               onChange={handleInput}
@@ -107,17 +140,17 @@ export default function Home() {
             />
           </div>
           <textarea
-            className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+            className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
             name="description"
             placeholder="Description (optional)"
             value={form.description}
             onChange={handleInput}
             rows={2}
           />
-          <div className="flex items-center gap-4">
-            <div className="relative w-1/4">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <div className="relative w-full sm:w-1/4">
               <select
-                className="appearance-none w-full bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 pr-10"
+                className="appearance-none w-full bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 pr-10 text-neutral-100"
                 name="category"
                 value={form.category}
                 onChange={handleInput}
@@ -134,29 +167,30 @@ export default function Home() {
             </div>
             <button
               type="submit"
-              className="ml-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
+              className="w-full sm:w-auto sm:ml-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
             >
-              Add Resource
+              {editIndex !== null ? "Update Resource" : "Add Resource"}
             </button>
+            {editIndex !== null && (
+              <button
+                type="button"
+                onClick={() => {
+                  setEditIndex(null);
+                  setForm({
+                    title: "",
+                    link: "",
+                    description: "",
+                    category: "Design",
+                  });
+                }}
+                className="w-full sm:w-auto text-xs text-neutral-400 hover:underline sm:ml-2 order-first sm:order-last"
+              >
+                Cancel Edit
+              </button>
+            )}
           </div>
-          {editIndex !== null && (
-            <button
-              type="button"
-              onClick={() => {
-                setEditIndex(null);
-                setForm({
-                  title: "",
-                  link: "",
-                  description: "",
-                  category: "Design",
-                });
-              }}
-              className="ml-2 text-xs text-neutral-400 hover:underline"
-            >
-              Cancel
-            </button>
-          )}
         </form>
+
         <nav className="flex gap-2 mb-6 flex-wrap justify-center">
           {categories.map((cat) => (
             <button
@@ -172,47 +206,69 @@ export default function Home() {
             </button>
           ))}
         </nav>
-        <section className="grid gap-6 sm:grid-cols-2 overflow-y-auto">
+
+        <section className="grid gap-6 sm:grid-cols-2 overflow-y-auto h-[calc(100vh-32rem)]">
           {filteredResources.length === 0 ? (
             <div className="col-span-full text-center text-neutral-500 py-12">
               No resources yet. Add your first one!
             </div>
           ) : (
-            filteredResources.map((res, i) => (
+            filteredResources.map((res) => (
               <a
-                key={i}
+                key={res.link + res.title}
                 href={res.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-neutral-900 rounded-xl p-5 shadow hover:shadow-xl border border-neutral-800 hover:border-indigo-600 transition group"
+                className="bg-neutral-900 rounded-xl p-5 shadow hover:shadow-xl border border-neutral-800 hover:border-indigo-600 transition group flex flex-col justify-between"
               >
-                <div className="flex flex-row justify-between">
-                  <h2 className="text-md font-bold group-hover:text-indigo-400 transition line-clamp-1">
-                    {res.title}
-                  </h2>
-
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setForm(res);
-                      setEditIndex(i);
-                    }}
-                    className="text-indigo-500 hover:text-indigo-400 transition"
-                  >
-                    <Pencil size={20} />
-                  </button>
+                <div>
+                  <div className="flex flex-row items-start mb-2 w-full">
+                    <h2 className="text-md font-bold group-hover:text-indigo-400 transition line-clamp-1 mr-2 flex-1">
+                      {res.title}
+                    </h2>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleEdit(res);
+                        }}
+                        className="text-indigo-500 hover:text-indigo-400 transition flex-shrink-0"
+                        aria-label={`Edit ${res.title}`}
+                      >
+                        <Pencil size={20} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          const originalIndex = resources.findIndex(
+                            (r) =>
+                              r.title === res.title &&
+                              r.link === res.link &&
+                              r.description === res.description &&
+                              r.category === res.category
+                          );
+                          handleDelete(originalIndex);
+                        }}
+                        className="text-red-500 hover:text-red-400 transition flex-shrink-0"
+                        aria-label={`Delete ${res.title}`}
+                      >
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex mb-1">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-700/20 text-indigo-300 font-semibold">
+                      {res.category}
+                    </span>
+                  </div>
+                  {res.description && (
+                    <p className="text-neutral-400 text-sm mt-1 line-clamp-2">
+                      {res.description}
+                    </p>
+                  )}
                 </div>
-
-                <div className="flex">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-700/20 text-indigo-300 font-semibold">
-                    {res.category}
-                  </span>
-                </div>
-
-                <p className="text-neutral-400 text-sm mt-1 line-clamp-2">
-                  {res.description}
-                </p>
                 <span className="block mt-2 text-xs text-indigo-500 group-hover:underline break-all">
                   {res.link}
                 </span>
@@ -221,15 +277,18 @@ export default function Home() {
           )}
         </section>
       </div>
-      <footer className="mx-auto py-2 text-center text-sm text-neutral-500">
+
+      <footer className="mx-auto py-2 text-center text-sm text-neutral-500 mt-8">
         <p>
-          &copy; 2025 | made with several cups of americano, love
+          &copy; {new Date().getFullYear()} made with several cups of americano,
+          love by{" "}
           <a
             href="https://www.instagram.com/aacodee/?hl=en"
             target="_blank"
             rel="noopener noreferrer"
+            className="font-semibold hover:underline text-indigo-400"
           >
-            <strong> aacode</strong>
+            aacode
           </a>
         </p>
       </footer>

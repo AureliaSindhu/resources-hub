@@ -6,7 +6,6 @@ A modern, dark-themed web application for organizing and managing your favorite 
 
 ## Features
 
-- 🎨 Modern dark theme with responsive design
 - 📝 Add and manage resources
 - 🏷️ Predefined categories:
   - Design

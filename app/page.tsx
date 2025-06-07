@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import { ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { ChevronDown, Pencil, Plus, Trash2, X } from "lucide-react";
 
 import icon from "./icon.png";
 
@@ -23,6 +23,7 @@ const categories = [
 export default function Home() {
   const [resources, setResources] = useState<Resource[]>([]);
   const [filter, setFilter] = useState("All");
+  const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<Resource>({
     title: "",
     link: "",
@@ -116,80 +117,91 @@ export default function Home() {
           </p>
         </header>
 
-        <form
-          onSubmit={handleAddResource}
-          className="bg-neutral-900 rounded-xl p-6 mb-8 shadow-lg flex flex-col gap-4"
-        >
-          <div className="flex flex-col sm:flex-row gap-4">
-            <input
-              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
-              name="title"
-              placeholder="Title"
-              value={form.title}
-              onChange={handleInput}
-              required
-            />
-            <input
-              className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
-              name="link"
-              type="url"
-              placeholder="Link (https://...)"
-              value={form.link}
-              onChange={handleInput}
-              required
-            />
-          </div>
-          <textarea
-            className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
-            name="description"
-            placeholder="Description (optional)"
-            value={form.description}
-            onChange={handleInput}
-            rows={2}
-          />
-          <div className="flex flex-col sm:flex-row items-center gap-4">
-            <div className="relative w-full sm:w-1/4">
-              <select
-                className="appearance-none w-full bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 pr-10 text-neutral-100"
-                name="category"
-                value={form.category}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-4 py-2 rounded-lg shadow transition"
+          >
+            {showForm ? <X size={20} /> : <Plus size={20} />}
+          </button>
+        </div>
+
+        {showForm && (
+          <form
+            onSubmit={handleAddResource}
+            className="bg-neutral-900 rounded-xl p-6 mb-8 shadow-lg flex flex-col gap-4"
+          >
+            <div className="flex flex-col sm:flex-row gap-4">
+              <input
+                className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
+                name="title"
+                placeholder="Title"
+                value={form.title}
                 onChange={handleInput}
-              >
-                {categories.slice(1).map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400">
-                <ChevronDown size={20} />
-              </span>
+                required
+              />
+              <input
+                className="flex-1 bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
+                name="link"
+                type="url"
+                placeholder="Link (https://...)"
+                value={form.link}
+                onChange={handleInput}
+                required
+              />
             </div>
-            <button
-              type="submit"
-              className="w-full sm:w-auto sm:ml-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
-            >
-              {editIndex !== null ? "Update Resource" : "Add Resource"}
-            </button>
-            {editIndex !== null && (
+            <textarea
+              className="bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 text-neutral-100 placeholder-neutral-500"
+              name="description"
+              placeholder="Description (optional)"
+              value={form.description}
+              onChange={handleInput}
+              rows={2}
+            />
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <div className="relative w-full sm:w-1/4">
+                <select
+                  className="appearance-none w-full bg-neutral-800 rounded px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500 pr-10 text-neutral-100"
+                  name="category"
+                  value={form.category}
+                  onChange={handleInput}
+                >
+                  {categories.slice(1).map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-indigo-400">
+                  <ChevronDown size={20} />
+                </span>
+              </div>
               <button
-                type="button"
-                onClick={() => {
-                  setEditIndex(null);
-                  setForm({
-                    title: "",
-                    link: "",
-                    description: "",
-                    category: "Design",
-                  });
-                }}
-                className="w-full sm:w-auto text-xs text-neutral-400 hover:underline sm:ml-2 order-first sm:order-last"
+                type="submit"
+                className="w-full sm:w-auto sm:ml-auto bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2 rounded-lg shadow transition"
               >
-                Cancel Edit
+                {editIndex !== null ? "Update Resource" : "Add Resource"}
               </button>
-            )}
-          </div>
-        </form>
+              {editIndex !== null && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditIndex(null);
+                    setForm({
+                      title: "",
+                      link: "",
+                      description: "",
+                      category: "Design",
+                    });
+                  }}
+                  className="w-full sm:w-auto text-xs text-neutral-400 hover:underline sm:ml-2 order-first sm:order-last"
+                >
+                  Cancel Edit
+                </button>
+              )}
+            </div>
+          </form>
+        )}
 
         <nav className="flex gap-2 mb-6 flex-wrap justify-center">
           {categories.map((cat) => (
@@ -207,7 +219,7 @@ export default function Home() {
           ))}
         </nav>
 
-        <section className="grid gap-6 sm:grid-cols-2 overflow-y-auto h-[calc(100vh-32rem)]">
+        <section className="grid gap-6 sm:grid-cols-2 overflow-y-auto h-[calc(100vh-16rem)]">
           {filteredResources.length === 0 ? (
             <div className="col-span-full text-center text-neutral-500 py-12">
               No resources yet. Add your first one!
